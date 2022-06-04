@@ -67,7 +67,7 @@ type GinJWTMiddleware struct {
 	Unauthorized func(c *gin.Context, code int, message string)
 
 	// User can define own LoginResponse func.
-	LoginResponse func(c *gin.Context, code int, message string, time time.Time)
+	LoginResponse func(data interface{}, c *gin.Context, code int, message string, time time.Time)
 
 	// User can define own LogoutResponse func.
 	LogoutResponse func(c *gin.Context, code int)
@@ -333,7 +333,7 @@ func (mw *GinJWTMiddleware) MiddlewareInit() error {
 	}
 
 	if mw.LoginResponse == nil {
-		mw.LoginResponse = func(c *gin.Context, code int, token string, expire time.Time) {
+		mw.LoginResponse = func(data interface{}, c *gin.Context, code int, token string, expire time.Time) {
 			c.JSON(http.StatusOK, gin.H{
 				"code":   http.StatusOK,
 				"token":  token,
@@ -523,7 +523,7 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 		)
 	}
 
-	mw.LoginResponse(c, http.StatusOK, tokenString, expire)
+	mw.LoginResponse(data, c, http.StatusOK, tokenString, expire)
 }
 
 // LogoutHandler can be used by clients to remove the jwt cookie (if set)
